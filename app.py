@@ -3,11 +3,13 @@ from flask import Flask, request, jsonify, render_template, Response
 import requests
 import json
 import os
+from log import Log
 
 app = Flask(__name__)
 
 # 从配置文件中settings加载配置
 app.config.from_pyfile('settings.py')
+log = Log("chat")
 
 @app.route("/", methods=["GET"])
 def index():
@@ -43,6 +45,8 @@ def chat():
     }
 
     try:
+        # chatgpt请求日志打印
+        log.info("ChatReq:{0}".format(data))
         resp = requests.post(
             url=app.config["URL"],
             headers=headers,
@@ -50,6 +54,8 @@ def chat():
             stream=True,
             timeout=(10, 10)  # 连接超时时间为10秒，读取超时时间为10秒
         )
+        # chatgpt返回日志打印
+        log.info("ChatResp:{0}".format(resp))
     except requests.exceptions.Timeout:
         return jsonify({"error": {"message": "请求超时，请稍后再试！", "type": "timeout_error", "code": ""}})
 

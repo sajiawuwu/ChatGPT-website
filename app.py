@@ -46,7 +46,7 @@ def chat():
 
     try:
         # chatgpt请求日志打印
-        log.info("ChatReq:{0}".format(data['messages'][0]['content']))
+        log.info("ChatReq:{0}".format(data['messages'][-1]['content']))
         resp = requests.post(
             url=app.config["URL"],
             headers=headers,

@@ -60,6 +60,7 @@ def chat():
     # 迭代器实现流式响应
     def generate():
         errorStr = ""
+        respContent = ""
         for chunk in resp.iter_lines():
             if chunk:
                 streamStr = chunk.decode("utf-8").replace("data: ", "")
@@ -74,16 +75,16 @@ def chat():
                 else:
                     if "content" in delData["delta"]:
                         respStr = delData["delta"]["content"]
-                        respContent = respContent + respStr
-                        # chatgpt请求日志打印
-                        log.info("ChatReq:{0}".format(respContent))
+                        respContent += respStr
                         yield respStr
 
         # 如果出现错误，此时错误信息迭代器已处理完，app_context已经出栈，要返回错误信息，需要将app_context手动入栈
         if errorStr != "":
             with app.app_context():
+                respContent += errorStr
                 yield errorStr
-
+                # chatgpt请求日志打印
+        log.info("ChatReq:{0}".format(respContent))
     return Response(generate(), content_type='application/octet-stream')
 
 if __name__ == '__main__':

@@ -84,7 +84,7 @@ def chat():
                 respContent += errorStr
                 yield errorStr
                 # chatgpt请求日志打印
-        log.info("ChatReq:{0}".format(respContent))
+        log.info("ChatResp:{0}".format(respContent))
     return Response(generate(), content_type='application/octet-stream')
 
 if __name__ == '__main__':

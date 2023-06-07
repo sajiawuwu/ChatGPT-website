@@ -46,7 +46,7 @@ def chat():
 
     try:
         # chatgpt请求日志打印
-        log.info("ChatReq:{0}".format(data))
+        log.info("ChatReq:{0}".format(data['messages'][0]['content']))
         resp = requests.post(
             url=app.config["URL"],
             headers=headers,
@@ -54,8 +54,6 @@ def chat():
             stream=True,
             timeout=(10, 10)  # 连接超时时间为10秒，读取超时时间为10秒
         )
-        # chatgpt返回日志打印
-        log.info("ChatResp:{0}".format(resp))
     except requests.exceptions.Timeout:
         return jsonify({"error": {"message": "请求超时，请稍后再试！", "type": "timeout_error", "code": ""}})
 
@@ -76,7 +74,8 @@ def chat():
                 else:
                     if "content" in delData["delta"]:
                         respStr = delData["delta"]["content"]
-                        # print(respStr)
+                        # chatgpt返回日志打印
+                        log.info("ChatResp:{0}".format(respStr))
                         yield respStr
 
         # 如果出现错误，此时错误信息迭代器已处理完，app_context已经出栈，要返回错误信息，需要将app_context手动入栈

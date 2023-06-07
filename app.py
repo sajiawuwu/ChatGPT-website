@@ -74,8 +74,9 @@ def chat():
                 else:
                     if "content" in delData["delta"]:
                         respStr = delData["delta"]["content"]
-                        # chatgpt返回日志打印
-                        log.info("ChatResp:{0}".format(respStr))
+                        respContent = respContent + respStr
+                        # chatgpt请求日志打印
+                        log.info("ChatReq:{0}".format(respContent))
                         yield respStr
 
         # 如果出现错误，此时错误信息迭代器已处理完，app_context已经出栈，要返回错误信息，需要将app_context手动入栈
